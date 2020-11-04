@@ -43,10 +43,10 @@ int c_get_network_interfaces(struct network_interface *ns, int max_ns)
         adapter = adapters;
 
         while (i < max_ns && adapter) {
-            wszcopy(ns[i].name, adapter->FriendlyName, NAME_SIZE);
-            memcpy(ns[i].mac_address, adapter->PhysicalAddress, MAC_SIZE);
+            for (unicast = adapter->FirstUnicastAddress; i < max_ns && unicast; unicast = unicast->Next) {
+                wszcopy(ns[i].name, adapter->FriendlyName, NAME_SIZE);
+                memcpy(ns[i].mac_address, adapter->PhysicalAddress, MAC_SIZE);
 
-            for (unicast = adapter->FirstUnicastAddress; unicast; unicast = unicast->Next) {
                 addr = unicast->Address.lpSockaddr;
                 family = addr->sa_family;
 
@@ -55,9 +55,10 @@ int c_get_network_interfaces(struct network_interface *ns, int max_ns)
                 } else if (family == AF_INET6) {
                     ipv6copy(&ns[i].ip6_address, addr);
                 }
+
+                i++;
             }
 
-            i++;
             adapter = adapter->Next;
         }
     }
