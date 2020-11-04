@@ -52,8 +52,10 @@ int c_get_network_interfaces(struct network_interface *ns, int max_ns)
 
                 if (family == AF_INET) {
                     ipv4copy(&ns[i].ip_address, addr);
+                    memset(&ns[i].ip6_address, 0, sizeof(ipv6));
                 } else if (family == AF_INET6) {
                     ipv6copy(&ns[i].ip6_address, addr);
+                    memset(&ns[i].ip_address, 0, sizeof(ipv4));
                 }
 
                 i++;
