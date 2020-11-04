@@ -83,8 +83,6 @@ struct network_interface *add_interface(struct network_interface *ns, const wcha
         if (wcsempty(ns[i].name)) {
             wszcopy(ns[i].name, name, NAME_SIZE);
             return &ns[i];
-        } else if (wcscmp(ns[i].name, name) == 0) {
-            return &ns[i];
         }
     }
     return NULL;
@@ -131,6 +129,9 @@ int c_get_network_interfaces(struct network_interface *ns, int max_ns)
 
         /* lookup or add a new interface with the given name */
         n = add_interface(ns, name, max_ns);
+
+        memset(&n->ip6_address, 0, sizeof(ipv6));
+        memset(&n->ip_address, 0, sizeof(ipv4));
 
         /* extract the address from this item */
         family = addr->sa_family;
